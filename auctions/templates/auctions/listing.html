@@ -1,0 +1,99 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{listing.title}}
+{% endblock %}
+
+{% block body %}
+    {% if message %}
+        {{message}}
+    {% endif %}
+
+    {% if user.is_authenticated%}
+        <div style="float: right; translate: -400px 0px;" class="form-group">
+            {% if exists %}
+                <form action="{% url 'removeWatchlist' id=listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" style="background-color: red; color: white;" value="Remove from Watchlist" class="btn btn-success">
+                </form>
+            {% else %}
+                <form action="{% url 'addWatchlist' id=listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" style="background-color: blue; color: white;" value="Add to Watchlist" class="btn btn-success">
+                </form>
+            {% endif %}
+    {% endif %}
+
+</div>
+    
+    <div stlye="display: inline-flex; padding: 20px; " class="form-inline">
+        <div style="float: left; ">
+            {% if listing.image %}
+                <img src="{{listing.image.url}}" width="600" height="700">
+            {% endif %}
+        </div>
+        <div class="container" style="float:right">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td>Listing Name: </td>
+                        <td>{{listing.title}}</td>
+                    </tr>
+                    <tr>
+                        <td>Created On: </td>
+                        <td>{{listing.post_date}}</td>
+                    </tr>
+                    <tr>
+                        <td>Expired On: </td>
+                        <td>{{listing.expire_date}}</td>
+                    </tr>
+                    <tr>
+                        <td>Highest Bid: </td>
+                        <td>${{listing.highest_bid}} by {{listing.highest_bidder}}</td>
+                    </tr>
+                    <tr>
+                        <td>Category: </td>
+                        <td><a href="{% url 'category' category=listing.category %}">{{listing.category}}</a></td>
+                    </tr>
+                    <tr>
+                        <td>Description: </td>
+                        <td>{{listing.description}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br><br>
+            {% if user.is_authenticated %}
+                <form action="" method="POST" >
+                    <div class="form-group" style="display: inline-flex">
+                        {% csrf_token %}
+                        <input type="number" class="form-control" style="float:left" min="0.00" max="9999999.99"  id="bid" name="bid"><hr>
+                        <input type="submit" class="btn btn-primary" style="float:right" value="Submit Bid">
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <br><br>
+
+    <h2>Comments Sections</h2>
+    {% if user.is_authenticated %}
+        <form action="{% url 'comments' title=listing.title %}" method="POST">
+            <div class="form-group">
+                {% csrf_token %}
+                <textarea id="comment" name="comment" class="form-control" rows="5"></textarea><br>
+                <input type="submit" class="btn btn-success">
+            </div>
+        </form>
+    {% endif %}
+
+    <div class="media">
+        <div class="media-left">
+            {% for comment in comments %}
+                <h4 class="media-heading">{{comment.user.username}}</h4>
+                <p>{{comment.user_comment}}</p><br>
+            {% endfor %}
+        </div>
+    </div>
+    
+
+{% endblock %}

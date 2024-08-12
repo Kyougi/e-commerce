@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+{% load static % }
+
+{% block body %}
+    <h2>Active Listings</h2><br>
+    {% for list in listings %}
+        {% if not current_time >= list.expire_date %}
+            <div style="display: inline-flex; padding: 20px; box-shadow: 5px 3px 3px 3px black; width: 95%;" class="form-inline">
+                <div style="float: left; padding: 10px">
+                    {% if list.image %}
+                        <img src="{{list.image.url}}" width="400" height="500">
+                    {% endif %}
+                </div>
+                <div style="float: right; padding: 10px">
+                    <h1><a href="{{list.title}}">{{list.title}}</a></h1>
+                    <h3>Current Price: ${{list.highest_bid}}</h3>
+                    <br>
+                    <h5>Date Created: {{list.post_date}}</h5>
+                    <h5>Active Until: {{list.expire_date}}</h5>
+                </div>
+            </div>
+            <br><br><br>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %} 
